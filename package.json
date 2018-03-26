@@ -1,6 +1,6 @@
 {
   "name": "multipart-payload-transformer",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "license": "Apache-2.0 OR CC-BY-4.0",
   "description": "An element that contains methods to transform FormData object into Multipart message and ArrayBuffer",
   "devDependencies": {
