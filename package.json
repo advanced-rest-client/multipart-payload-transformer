@@ -16,7 +16,7 @@
   "scripts": {
     "lint": "polymer lint multipart-payload-transformer.html",
     "test-sauce": "polymer test --plugin sauce --job-name \"multipart-payload-transformer:local-test\"",
-    "test": "polymer test",
+    "test": "polymer test --plugin local",
     "update-types": "gen-typescript-declarations --deleteExisting --outDir ."
   },
   "repository": {
