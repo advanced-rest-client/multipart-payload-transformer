@@ -1,44 +1,30 @@
 <!doctype html>
-<!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
 <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
     <script src="../../iron-test-helpers/test-helpers.js"></script>
-    <script src="../../iron-test-helpers/mock-interactions.js"></script>
-
-    <!-- Step 1: import the element to test -->
+    <link rel="import" href="../../fetch-polyfill/fetch-polyfill.html">
     <link rel="import" href="../multipart-payload-transformer.html">
   </head>
   <body>
-
     <test-fixture id="basic">
       <template>
         <multipart-payload-transformer></multipart-payload-transformer>
       </template>
     </test-fixture>
-
     <script>
-    /* global sinon, fixture, assert */
-    suite('basic', function() {
-      var element;
-      setup(function() {
+    /* global TestHelpers, sinon */
+    suite('basic', () => {
+      let element;
+      setup(() => {
         element = fixture('basic');
       });
 
       function createFormData() {
-        var fd = new FormData();
+        const fd = new FormData();
         fd.append('test-image', new Blob(['.'], {type: 'image/jpg'}), 'test.jpg');
         fd.append('test-unknown-mime', new Blob(['.']));
         fd.append('test-text', 'test');
@@ -47,7 +33,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       function hasAdvancedSupport() {
         try {
-          var fd = new FormData();
+          const fd = new FormData();
           fd.append('test', new Blob(['.'], {type: 'image/jpg'}), 'test.jpg');
           return ('entries' in fd);
         } catch (e) {
@@ -55,9 +41,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
-      suite('generateMessage()', function() {
+      suite('generateMessage()', () => {
 
-        test('Creates ArrayBuffer', TestHelpers.skipUnless(hasAdvancedSupport, function() {
+        test('Creates ArrayBuffer', TestHelpers.skipUnless(hasAdvancedSupport, () => {
           element.formData = createFormData();
           return element.generateMessage()
           .then(function(message) {
@@ -65,54 +51,52 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
         }));
 
-        test('Fires content-type-changed event', TestHelpers.skipUnless(hasAdvancedSupport, function() {
-          var spy = sinon.stub();
+        test('Fires content-type-changed event', TestHelpers.skipUnless(hasAdvancedSupport, () => {
+          const spy = sinon.stub();
           element.addEventListener('content-type-changed', spy);
           element.formData = createFormData();
-          return element.generateMessage(function() {
+          return element.generateMessage(() => {
             assert.isTrue(spy.calledOnce);
           });
         }));
 
-        test('Fires multipart-boundary-changed event', TestHelpers.skipUnless(hasAdvancedSupport, function() {
-          var spy = sinon.stub();
+        test('Fires multipart-boundary-changed event', TestHelpers.skipUnless(hasAdvancedSupport, () => {
+          const spy = sinon.stub();
           element.addEventListener('multipart-boundary-changed', spy);
           element.formData = createFormData();
-          return element.generateMessage(function() {
+          return element.generateMessage(() => {
             assert.isTrue(spy.calledOnce);
           });
         }));
 
-        test('contentType is set', TestHelpers.skipUnless(hasAdvancedSupport, function() {
-          var spy = sinon.stub();
-          var handlerContentType;
+        test('contentType is set', TestHelpers.skipUnless(hasAdvancedSupport, () => {
+          let handlerContentType;
           element.addEventListener('content-type-changed', function(e) {
             handlerContentType = e.detail.value;
           });
           element.formData = createFormData();
-          return element.generateMessage(function() {
+          return element.generateMessage(() => {
             assert.typeOf(element.contentType, 'string');
             assert.equal(element.contentType, handlerContentType);
           });
         }));
 
-        test('boundary is set', TestHelpers.skipUnless(hasAdvancedSupport, function() {
-          var spy = sinon.stub();
-          var handlerBoundary;
+        test('boundary is set', TestHelpers.skipUnless(hasAdvancedSupport, () => {
+          let handlerBoundary;
           element.addEventListener('multipart-boundary-changed', function(e) {
             handlerBoundary = e.detail.value;
           });
           element.formData = createFormData();
-          return element.generateMessage(function() {
+          return element.generateMessage(() => {
             assert.typeOf(element.boundary, 'string');
             assert.equal(element.boundary, handlerBoundary);
           });
         }));
       });
 
-      suite('generatePreview()', function() {
+      suite('generatePreview()', () => {
 
-        test('Creates String', TestHelpers.skipUnless(hasAdvancedSupport, function() {
+        test('Creates String', TestHelpers.skipUnless(hasAdvancedSupport, () => {
           element.formData = createFormData();
           return element.generatePreview()
           .then(function(message) {
@@ -120,20 +104,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
         }));
 
-        test('Fires content-type-changed event', TestHelpers.skipUnless(hasAdvancedSupport, function() {
-          var spy = sinon.stub();
+        test('Fires content-type-changed event', TestHelpers.skipUnless(hasAdvancedSupport, () => {
+          const spy = sinon.stub();
           element.addEventListener('content-type-changed', spy);
           element.formData = createFormData();
-          return element.generatePreview(function() {
+          return element.generatePreview(() => {
             assert.isTrue(spy.calledOnce);
           });
         }));
 
-        test('Fires multipart-boundary-changed event', TestHelpers.skipUnless(hasAdvancedSupport, function() {
-          var spy = sinon.stub();
+        test('Fires multipart-boundary-changed event', TestHelpers.skipUnless(hasAdvancedSupport, () => {
+          const spy = sinon.stub();
           element.addEventListener('multipart-boundary-changed', spy);
           element.formData = createFormData();
-          return element.generatePreview(function() {
+          return element.generatePreview(() => {
             assert.isTrue(spy.calledOnce);
           });
         }));
