@@ -1,7 +1,7 @@
 {
   "name": "multipart-payload-transformer",
   "description": "An element that contains methods to transform FormData object into Multipart message and ArrayBuffer",
-  "version": "2.0.0-preview",
+  "version": "2.0.0",
   "license": "Apache-2.0",
   "authors": [
     "Pawel Psztyc",
