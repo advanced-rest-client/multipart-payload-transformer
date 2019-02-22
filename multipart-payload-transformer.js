@@ -1,4 +1,4 @@
-<!--
+/**
 @license
 Copyright 2018 The Advanced REST client authors <arc@mulesoft.com>
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -10,9 +10,9 @@ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
--->
-<link rel="import" href="../polymer/polymer-element.html">
-<script>
+*/
+import { PolymerElement } from '../../@polymer/polymer/polymer-element.js';
+
 /**
  * An element that contains methods to transform FormData object
  * into Multipart message and ArrayBuffer
@@ -32,7 +32,7 @@ the License.
  * @polymer
  * @memberof ApiElements
  */
-class MultipartPayloadTransformer extends Polymer.Element {
+class MultipartPayloadTransformer extends PolymerElement {
   static get is() { return 'multipart-payload-transformer'; }
   static get properties() {
     return {
@@ -163,4 +163,3 @@ class MultipartPayloadTransformer extends Polymer.Element {
 
 }
 window.customElements.define(MultipartPayloadTransformer.is, MultipartPayloadTransformer);
-</script>
