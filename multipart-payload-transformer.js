@@ -11,8 +11,7 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 */
-import { PolymerElement } from '../../@polymer/polymer/polymer-element.js';
-
+import {PolymerElement} from '@polymer/polymer/polymer-element.js';
 /**
  * An element that contains methods to transform FormData object
  * into Multipart message and ArrayBuffer
@@ -23,17 +22,18 @@ import { PolymerElement } from '../../@polymer/polymer/polymer-element.js';
  * <multipart-payload-transformer form-data="[[formData]]"></multipart-payload-transformer>
  * ```
  *
- * ## Changes in version 2.0
- * - The element does not includes polyfill by default. Use
- * `advanced-rest-client/fetch-polyfill` and `advanced-rest-client/arc-polyfills`
- * if targeting browsers that does not support Fetch API.
+ * ## Legacy dependencies
+ *
+ * If targeting legacy browsers add polyfill for Fetch API.
  *
  * @customElement
  * @polymer
  * @memberof ApiElements
  */
-class MultipartPayloadTransformer extends PolymerElement {
-  static get is() { return 'multipart-payload-transformer'; }
+export class MultipartPayloadTransformer extends PolymerElement {
+  static get is() {
+    return 'multipart-payload-transformer';
+  }
   static get properties() {
     return {
       /**
@@ -124,8 +124,8 @@ class MultipartPayloadTransformer extends PolymerElement {
   }
   /**
    * Convert ArrayBuffer to readable form
-   * @param {ArrayBuffer} buff
-   * @returns {String} Converted string
+   * @param {ArrayBuffer} buffer
+   * @return {String} Converted string
    */
   arrayBufferToString(buffer) {
     if (!!buffer.buffer) {
@@ -160,6 +160,5 @@ class MultipartPayloadTransformer extends PolymerElement {
    * @event multipart-boundary-changed
    * @param {String} value New value of the boundary
    */
-
 }
 window.customElements.define(MultipartPayloadTransformer.is, MultipartPayloadTransformer);
