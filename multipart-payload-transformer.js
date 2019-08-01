@@ -1,4 +1,4 @@
-<!--
+/**
 @license
 Copyright 2018 The Advanced REST client authors <arc@mulesoft.com>
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -10,9 +10,8 @@ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
--->
-<link rel="import" href="../polymer/polymer-element.html">
-<script>
+*/
+import { LitElement } from 'lit-element';
 /**
  * An element that contains methods to transform FormData object
  * into Multipart message and ArrayBuffer
@@ -23,17 +22,15 @@ the License.
  * <multipart-payload-transformer form-data="[[formData]]"></multipart-payload-transformer>
  * ```
  *
- * ## Changes in version 2.0
- * - The element does not includes polyfill by default. Use
- * `advanced-rest-client/fetch-polyfill` and `advanced-rest-client/arc-polyfills`
- * if targeting browsers that does not support Fetch API.
+ * ## Legacy dependencies
+ *
+ * If targeting legacy browsers add polyfill for Fetch API.
  *
  * @customElement
  * @polymer
- * @memberof ApiElements
+ * @memberof LogicElements
  */
-class MultipartPayloadTransformer extends Polymer.Element {
-  static get is() { return 'multipart-payload-transformer'; }
+export class MultipartPayloadTransformer extends LitElement {
   static get properties() {
     return {
       /**
@@ -41,26 +38,111 @@ class MultipartPayloadTransformer extends Polymer.Element {
        *
        * @type {FormData}
        */
-      formData: Object,
+      formData: { type: Object },
       /**
        * Latest generated boundary value for the multipart forms.
        * Each call to `generateMessage()` or `generatePreview()` will
        * generate new content type and therefore boundary value.
        */
-      boundary: {
-        type: String,
-        notify: true
-      },
+      boundary: { type: String },
       /**
        * Latest generated content-type value for the multipart forms.
        * Each call to `generateMessage()` or `generatePreview()` will
        * generate new content type value.
        */
-      contentType: {
-        type: String,
-        notify: true
-      }
+      contentType: { type: String }
     };
+  }
+
+  get boundary() {
+    return this._boundary;
+  }
+
+  set boundary(value) {
+    const old = this._boundary;
+    /* istanbul ignore if */
+    if (old === value) {
+      return;
+    }
+    this._boundary = value;
+    this.dispatchEvent(new CustomEvent('boundary-changed', {
+      detail: {
+        value
+      }
+    }));
+  }
+
+  get contentType() {
+    return this._contentType;
+  }
+
+  set contentType(value) {
+    const old = this._contentType;
+    /* istanbul ignore if */
+    if (old === value) {
+      return;
+    }
+    this._contentType = value;
+    this.dispatchEvent(new CustomEvent('contenttype-changed', {
+      detail: {
+        value
+      }
+    }));
+  }
+  /**
+   * @return {Function} Previously registered handler for `boundary-changed` event
+   */
+  get onboundary() {
+    return this['_onboundary-changed'];
+  }
+  /**
+   * Registers a callback function for `boundary-changed` event
+   * @param {Function} value A callback to register. Pass `null` or `undefined`
+   * to clear the listener.
+   */
+  set onboundary(value) {
+    this._registerCallback('boundary-changed', value);
+  }
+  /**
+   * @return {Function} Previously registered handler for `contenttype-changed` event
+   */
+  get oncontenttype() {
+    return this['_oncontenttype-changed'];
+  }
+  /**
+   * Registers a callback function for `contenttype-changed` event
+   * @param {Function} value A callback to register. Pass `null` or `undefined`
+   * to clear the listener.
+   */
+  set oncontenttype(value) {
+    this._registerCallback('contenttype-changed', value);
+  }
+
+
+  connectedCallback() {
+    /* istanbul ignore else */
+    if (super.connectedCallback) {
+      super.connectedCallback();
+    }
+    this.setAttribute('aria-hidden', 'true');
+  }
+
+  /**
+   * Registers an event handler for given type
+   * @param {String} eventType Event type (name)
+   * @param {Function} value The handler to register
+   */
+  _registerCallback(eventType, value) {
+    const key = `_on${eventType}`;
+    if (this[key]) {
+      this.removeEventListener(eventType, this[key]);
+    }
+    if (typeof value !== 'function') {
+      this[key] = null;
+      return;
+    }
+    this[key] = value;
+    this.addEventListener(eventType, value);
   }
   /**
    * Generates an ArrayBuffer instance from the FormData object.
@@ -88,7 +170,7 @@ class MultipartPayloadTransformer extends Polymer.Element {
    * @param {String} contentType New cintent type.
    */
   _processContentType(contentType) {
-    this.set('contentType', contentType);
+    this.contentType = contentType;
     this.dispatchEvent(new CustomEvent('content-type-changed', {
       bubbles: true,
       composed: true,
@@ -101,7 +183,7 @@ class MultipartPayloadTransformer extends Polymer.Element {
       return;
     }
     const boundary = match[1];
-    this.set('boundary', boundary);
+    this.boundary = boundary;
     this.dispatchEvent(new CustomEvent('multipart-boundary-changed', {
       bubbles: true,
       composed: true,
@@ -115,20 +197,20 @@ class MultipartPayloadTransformer extends Polymer.Element {
    *
    * @return {Promise<String>} A promise resolved to a string message.
    */
-  generatePreview() {
+  async generatePreview() {
     if (!this.formData) {
       return Promise.reject(new Error('The FormData property is not set.'));
     }
-    return this.generateMessage()
-    .then((ab) => this.arrayBufferToString(ab));
+    const ab = await this.generateMessage();
+    return this.arrayBufferToString(ab);
   }
   /**
    * Convert ArrayBuffer to readable form
-   * @param {ArrayBuffer} buff
-   * @returns {String} Converted string
+   * @param {ArrayBuffer} buffer
+   * @return {String} Converted string
    */
   arrayBufferToString(buffer) {
-    if (!!buffer.buffer) {
+    if (buffer.buffer) {
       // Not a ArrayBuffer, need and instance of AB
       // It can't just get buff.buffer because it will use original buffer if the buff is a slice
       // of it.
@@ -160,7 +242,5 @@ class MultipartPayloadTransformer extends Polymer.Element {
    * @event multipart-boundary-changed
    * @param {String} value New value of the boundary
    */
-
 }
-window.customElements.define(MultipartPayloadTransformer.is, MultipartPayloadTransformer);
-</script>
+window.customElements.define('multipart-payload-transformer', MultipartPayloadTransformer);
