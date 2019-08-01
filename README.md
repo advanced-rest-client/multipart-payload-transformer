@@ -1,4 +1,4 @@
-[![Published on NPM](https://img.shields.io/npm/v/@api-components/multipart-payload-transformer.svg)](https://www.npmjs.com/package/@api-components/multipart-payload-transformer)
+[![Published on NPM](https://img.shields.io/npm/v/@advanced-rest-client/multipart-payload-transformer.svg)](https://www.npmjs.com/package/@advanced-rest-client/multipart-payload-transformer)
 
 [![Build Status](https://travis-ci.org/advanced-rest-client/multipart-payload-transformer.svg?branch=stage)](https://travis-ci.org/advanced-rest-client/multipart-payload-transformer)  
 
@@ -6,51 +6,48 @@
 
 # multipart-payload-transformer
 
-An element that contains methods to transform FormData object into Multipart
-message and ArrayBuffer
-
-### Example
-
-```html
-<multipart-payload-transformer form-data="[[formData]]"></multipart-payload-transformer>
-```
-
-## API components
-
-This components is a part of [API components ecosystem](https://elements.advancedrestclient.com/)
+An element to transform `FormData` object into Multipart message and `ArrayBuffer`.
 
 ## Usage
 
 ### Installation
 ```
-npm install --save @api-components/multipart-payload-transformer
+npm install --save @advanced-rest-client/multipart-payload-transformer
 ```
 
-### In an html file
+### In a LitElement
 
-```html
-<html>
-  <head>
-    <script type="module">
-      import '@api-components/multipart-payload-transformer/multipart-payload-transformer.js';
-    </script>
-  </head>
-  <body>
-    <multipart-payload-transformer></multipart-payload-transformer>
-  </body>
-</html>
+```js
+import { LitElement, html } from 'lit-element';
+import '@advanced-rest-client/code-mirror/code-mirror.js';
+
+class SampleElement extends PolymerElement {
+  render() {
+    const formData = new FormData();
+    formData.add('filed', new Blob(['test'], { type: 'text/plain' }));
+    return html`
+    <multipart-payload-transformer .formData="${formData}"></multipart-payload-transformer>
+    `;
+  }
+
+  async run() {
+    const message = await this.shadowRoot.querySelector('multipart-payload-transformer').generateMessage();
+    console.log(message);
+  }
+}
+customElements.define('sample-element', SampleElement);
 ```
 
 ### In a Polymer 3 element
 
 ```js
 import {PolymerElement, html} from '@polymer/polymer';
-import '@api-components/multipart-payload-transformer/multipart-payload-transformer.js';
+import '@advanced-rest-client/multipart-payload-transformer/multipart-payload-transformer.js';
 
 class SampleElement extends PolymerElement {
   static get template() {
     return html`
-    <multipart-payload-transformer form-data="[[formData]]"></multipart-payload-transformer>
+    <multipart-payload-transformer formdata="[[formData]]"></multipart-payload-transformer>
     `;
   }
 
@@ -70,23 +67,26 @@ class SampleElement extends PolymerElement {
 customElements.define('sample-element', SampleElement);
 ```
 
-### Installation
+### Development
 
 ```sh
 git clone https://github.com/advanced-rest-client/multipart-payload-transformer
 cd multipart-payload-transformer
 npm install
-npm install -g polymer-cli
 ```
 
 ### Running the demo locally
 
 ```sh
-polymer serve --npm
-open http://127.0.0.1:<port>/demo/
+npm start
 ```
 
 ### Running the tests
+
 ```sh
-polymer test --npm
+npm test
 ```
+
+## API components
+
+This components is a part of [API components ecosystem](https://elements.advancedrestclient.com/)

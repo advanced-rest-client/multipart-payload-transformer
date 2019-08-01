@@ -11,11 +11,11 @@
 
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 
-import {PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {LitElement} from 'lit-element';
 
 export {MultipartPayloadTransformer};
 
-declare namespace ApiElements {
+declare namespace LogicElements {
 
   /**
    * An element that contains methods to transform FormData object
@@ -31,12 +31,7 @@ declare namespace ApiElements {
    *
    * If targeting legacy browsers add polyfill for Fetch API.
    */
-  class MultipartPayloadTransformer extends PolymerElement {
-
-    /**
-     * A form data object to transform.
-     */
-    formData: FormData|null;
+  class MultipartPayloadTransformer extends LitElement {
 
     /**
      * Latest generated boundary value for the multipart forms.
@@ -51,6 +46,23 @@ declare namespace ApiElements {
      * generate new content type value.
      */
     contentType: string|null|undefined;
+    onboundary: Function|null;
+    oncontenttype: Function|null;
+
+    /**
+     * A form data object to transform.
+     */
+    formData: FormData|null;
+    constructor();
+    connectedCallback(): void;
+
+    /**
+     * Registers an event handler for given type
+     *
+     * @param eventType Event type (name)
+     * @param value The handler to register
+     */
+    _registerCallback(eventType: String|null, value: Function|null): void;
 
     /**
      * Generates an ArrayBuffer instance from the FormData object.
@@ -87,6 +99,6 @@ declare namespace ApiElements {
 declare global {
 
   interface HTMLElementTagNameMap {
-    "multipart-payload-transformer": ApiElements.MultipartPayloadTransformer;
+    "multipart-payload-transformer": LogicElements.MultipartPayloadTransformer;
   }
 }
